@@ -1,9 +1,7 @@
-# babylontut
+# tudLogo
 
-"Babylon.js Tutorial For Absolute Beginners" YouTube tutorial project files https://youtu.be/e6EkrLr8g_o
+1. Install dependencies: open project in VSCode -> open command line -> type: npm install
+2. Run local server by typing this command: npm run dev
+3. Ctrl + left click on the address generated in the command line.
 
-1. Clone repository
-2. Install dependencies: open project in VSCode -> open command line -> type: npm install
-3. Run local server by typing this command: npm run dev
-4. Ctrl + left click on the address generated in the command line.
-5. Have fun! :D
+![screenshot_24-4-12_0-46](https://github.com/EClp007/tudLogo/assets/96184306/287f61f7-3be5-4b68-bb9e-85f61fe5f199)
