@@ -24,6 +24,9 @@ const createScene = async () => {
   const model = result.meshes[0]; 
   model.rotation =new BABYLON.Vector3(3/2*Math.PI, Math.PI, 0);
   model.position = new BABYLON.Vector3(0, 10, 0);
+  model.renderOverlay = true;
+  model.overlayColor = new BABYLON.Color3(0, 0, 0.5); // Dunkles Blau (R=0, G=0, B=0.5)
+
 
   const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
     height: 100,
