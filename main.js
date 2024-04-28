@@ -46,8 +46,12 @@ const createScene = async () => {
   const xr = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
         sessionMode: 'immersive-ar'
-    }
+    },
+    optionalFeatures: true
 });
+
+const fm = xr.baseExperience.featuresManager;
+const xrCamera = xr.baseExperience.camera
 
   // Return the scene once everything is loaded
   return scene;
