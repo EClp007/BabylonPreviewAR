@@ -62,7 +62,7 @@ createScene().then((scene) => {
   });
 
   // Enable Babylon Inspector for debugging
-  Inspector.Show(scene, { enablePopup: false });
+  // Inspector.Show(scene, { enablePopup: false });
 });
 
 // Handle window resizing
