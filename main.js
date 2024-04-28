@@ -57,18 +57,12 @@ xr.baseExperience.onXRFrame = (time, frame) => {
     const viewerPosition = viewerPose.transform.position;
     
     // Example: Move the user forward by 1 meter
-    viewerPosition.z -= 1;
+    viewerPosition.z -= 50;
 
     // Apply the new position to the camera
     xr.baseExperience.camera.position.copyFrom(viewerPosition);
   }
 };
-
-
-
-
-const fm = xr.baseExperience.featuresManager;
-const xrCamera = xr.baseExperience.camera
 
   // Return the scene once everything is loaded
   return scene;
