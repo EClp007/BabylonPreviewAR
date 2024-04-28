@@ -43,14 +43,16 @@ const createScene = async () => {
     model.rotation.y += 0.01;
   });
 
+  const environment = scene.createDefaultEnvironment();
+
   const xr = await scene.createDefaultXRExperienceAsync({
+    floorMeshes: [environment.ground],
     uiOptions: {
         sessionMode: 'immersive-ar'
     },
     optionalFeatures: true
 });
 
-const fm = xr.baseExperience.featuresManager;
 const xrCamera = xr.baseExperience.camera.setTransformationFromNonVRCamera();
 
   // Return the scene once everything is loaded
@@ -67,7 +69,7 @@ createScene().then((scene) => {
   });
 
   // Enable Babylon Inspector for debugging
-  // Inspector.Show(scene, { enablePopup: false });
+   Inspector.Show(scene, { enablePopup: false });
 });
 
 // Handle window resizing
