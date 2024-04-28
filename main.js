@@ -15,10 +15,10 @@ const createScene = async () => {
   const scene = new BABYLON.Scene(engine);
 
   // Create a default camera and light in the scene
-  const camera = new BABYLON.WebXRAbstractMotionController('camera', scene);
-  //const camera = new BABYLON.ArcRotateCamera('camera', 0, 0, 10, new BABYLON.Vector3(0, 0, 0), scene);
-  //camera.attachControl(true);
-  //camera.setPosition(new BABYLON.Vector3(0, 30, 110));
+  //const camera = new BABYLON.WebXRAbstractMotionController('camera', scene);
+  const camera = new BABYLON.ArcRotateCamera('camera', 0, 0, 110, new BABYLON.Vector3(0, 0, 0), scene);
+  camera.attachControl(true);
+  camera.setPosition(new BABYLON.Vector3(0, 30, 110));
   const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
 
   const result = await BABYLON.SceneLoader.ImportMeshAsync('', 'TUD_Logo.stl', '', scene);
