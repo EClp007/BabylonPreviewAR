@@ -42,6 +42,12 @@ const createScene = async () => {
     model.rotation.y += 0.01;
   });
 
+  const xr = await scene.createDefaultXRExperienceAsync({
+    uiOptions: {
+        sessionMode: 'immersive-ar'
+    }
+});
+
   // Return the scene once everything is loaded
   return scene;
 };
