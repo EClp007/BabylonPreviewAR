@@ -52,6 +52,8 @@ const createScene = async () => {
 const xrCamera = xr.baseExperience.camera.rigCameras[0];    
 xrCamera.position = new BABYLON.Vector3(0, 30, 110);
 
+const lol = xr.baseExperience.camera.setTransformationFromNonVRCamera();
+
   // Return the scene once everything is loaded
   return scene;
 };
