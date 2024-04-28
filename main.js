@@ -17,7 +17,7 @@ const createScene = async () => {
   // Create a default camera and light in the scene
   const camera = new BABYLON.ArcRotateCamera('camera', 0, 0, 10, new BABYLON.Vector3(0, 0, 0), scene);
   camera.attachControl(true);
-  camera.setPosition(new BABYLON.Vector3(0, 0, 70));
+  camera.setPosition(new BABYLON.Vector3(0, 30, 110));
   const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
 
   const result = await BABYLON.SceneLoader.ImportMeshAsync('', 'TUD_Logo.stl', '', scene);
@@ -25,7 +25,7 @@ const createScene = async () => {
   model.rotation =new BABYLON.Vector3(3/2*Math.PI, Math.PI, 0);
   model.position = new BABYLON.Vector3(0, 10, 0);
   model.renderOverlay = true;
-  model.overlayColor = new BABYLON.Color3(0, 0, 0.5); // Dunkles Blau (R=0, G=0, B=0.5)
+  model.overlayColor = new BABYLON.Color3(0, 0, 0.5); 
 
 
   const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
