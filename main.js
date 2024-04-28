@@ -28,6 +28,7 @@ const createScene = async () => {
   model.overlayColor = new BABYLON.Color3(0, 0, 0.5); 
 
 
+  /*
   const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
     height: 100,
     width : 100,
@@ -35,7 +36,7 @@ const createScene = async () => {
 
   const groundCatMat = new BABYLON.StandardMaterial();
   ground.material = groundCatMat;
-  groundCatMat.diffuseTexture = new BABYLON.Texture('/galaxy.jpg');
+  groundCatMat.diffuseTexture = new BABYLON.Texture('/galaxy.jpg');*/
 
 
   scene.registerBeforeRender(() => {
@@ -46,13 +47,12 @@ const createScene = async () => {
     uiOptions: {
         sessionMode: 'immersive-ar'
     },
-    optionalFeatures: true
 });
 
 const xrCamera = xr.baseExperience.camera.rigCameras[0];    
 xrCamera.position = new BABYLON.Vector3(0, 30, 110);
 
-const lol = xr.baseExperience.camera.setTransformationFromNonVRCamera();
+const xrBaseCamera = xr.baseExperience.camera.setTransformationFromNonVRCamera();
 
   // Return the scene once everything is loaded
   return scene;
