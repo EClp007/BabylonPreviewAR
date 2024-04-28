@@ -53,8 +53,6 @@ const createScene = async () => {
     optionalFeatures: true
 });
 
-const xrCamera = xr.baseExperience.camera.setTransformationFromNonVRCamera();
-
   // Return the scene once everything is loaded
   return scene;
 };
