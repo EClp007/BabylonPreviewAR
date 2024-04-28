@@ -20,7 +20,7 @@ const createScene = async () => {
   camera.setPosition(new BABYLON.Vector3(0, 0, 70));
   const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
 
-  const result = await BABYLON.SceneLoader.ImportMeshAsync('TUD_Logo', '/TUD_Logo.stl', '', scene);
+  const result = await BABYLON.SceneLoader.ImportMeshAsync('', 'TUD_Logo.stl', '', scene);
   const model = result.meshes[0]; 
   model.rotation =new BABYLON.Vector3(3/2*Math.PI, Math.PI, 0);
   model.position = new BABYLON.Vector3(0, 10, 0);
