@@ -15,7 +15,6 @@ const createScene = async () => {
   const scene = new BABYLON.Scene(engine);
 
   // Create a default camera and light in the scene
-  //const camera = new BABYLON.WebXRAbstractMotionController('camera', scene);
   const camera = new BABYLON.ArcRotateCamera('camera', 0, 0, 110, new BABYLON.Vector3(0, 0, 0), scene);
   camera.attachControl(true);
   camera.setPosition(new BABYLON.Vector3(0, 30, 110));
@@ -43,15 +42,15 @@ const createScene = async () => {
     model.rotation.y += 0.01;
   });
 
-  const environment = scene.createDefaultEnvironment();
-
   const xr = await scene.createDefaultXRExperienceAsync({
-    floorMeshes: [environment.ground],
     uiOptions: {
         sessionMode: 'immersive-ar'
     },
     optionalFeatures: true
 });
+
+const xrCamera = xr.baseExperience.camera.rigCameras[0];    
+xrCamera.position = new BABYLON.Vector3(0, 30, 110);
 
   // Return the scene once everything is loaded
   return scene;
