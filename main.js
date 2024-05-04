@@ -64,19 +64,17 @@ const createScene = async () => {
 		},
 	});*/
 
-	const xr = await scene.createDefaultXRExperienceAsync({
-		uiOptions: {
-			sessionMode: "immersive-ar",
-		},
-		optionalFeatures: ["hit-test", "anchors"],
-	});
-
 	const defaultXRExperience =
 		await scene.createDefaultXRExperienceAsync(
 			/* optional configuration options */
 		);
 	if (!defaultXRExperience.baseExperience) {
-		// no xr support
+		const xr = await scene.createDefaultXRExperienceAsync({
+			uiOptions: {
+				sessionMode: "immersive-ar",
+			},
+			optionalFeatures: ["hit-test", "anchors"],
+		});
 	} else {
 		// all good, ready to go
 	}
