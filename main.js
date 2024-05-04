@@ -38,7 +38,6 @@ const createScene = async () => {
 	);
 	const model = result.meshes[0];
 	model.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
-	model.position = new BABYLON.Vector3(0, 0, 0);
 	model.renderOverlay = true;
 	model.overlayColor = new BABYLON.Color3(0, 0, 0.5);
 	model.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
@@ -77,35 +76,71 @@ const createScene = async () => {
 			sessionMode: sessionMode,
 		},
 		optionalFeatures: true,
+		disableTeleportation: true,
 	});
 	if (!defaultXRExperience.baseExperience) {
 		// XR is not supported
 		console.log("XR is not supported");
 	} else {
-		const fm = defaultXRExperience.baseExperience.featuresManager;
+		const featureManager = defaultXRExperience.baseExperience.featuresManager;
 
-		const hitTest = fm.enableFeature(BABYLON.WebXRHitTest, "latest");
+		const supported =
+			await defaultXRExperience.baseExperience.sessionManager.isSessionSupportedAsync(
+				"immersive-ar",
+			);
+		if (supported) {
+			// ar
+			const hitTest = featureManager.enableFeature(
+				BABYLON.WebXRHitTest,
+				"latest",
+			);
 
-		const dot = BABYLON.SphereBuilder.CreateSphere(
-			"dot",
-			{
-				diameter: 0.05,
-			},
-			scene,
-		);
-		dot.isVisible = false;
-		hitTest.onHitTestResultObservable.add((results) => {
-			if (results.length) {
-				dot.isVisible = true;
-				results[0].transformationMatrix.decompose(
-					dot.scaling,
-					dot.rotationQuaternion,
-					dot.position,
+			model.position = new BABYLON.Vector3(5, 0, 0);
+
+			const dot = BABYLON.MeshBuilder.CreateSphere(
+				"dot",
+				{
+					diameter: 0.05,
+				},
+				scene,
+			);
+			dot.isVisible = false;
+			hitTest.onHitTestResultObservable.add((results) => {
+				if (results.length) {
+					dot.isVisible = true;
+					results[0].transformationMatrix.decompose(
+						dot.scaling,
+						dot.rotationQuaternion,
+						dot.position,
+					);
+				} else {
+					dot.isVisible = false;
+				}
+			});
+		} else {
+			// vr
+			
+			featureManager.enableFeature(
+				BABYLON.WebXRFeatureName.MOVEMENT,
+				"latest",
+				{
+					xrInput: defaultXRExperience.input,
+				},
+			);
+			// Enable hand tracking
+			try {
+				featureManager.enableFeature(
+					BABYLON.WebXRFeatureName.HAND_TRACKING,
+					"latest",
+					{
+						xrInput: defaultXRExperience.input,
+						// other options
+					},
 				);
-			} else {
-				dot.isVisible = false;
+			} catch (e) {
+				console.log(e);
 			}
-		});
+		}
 	}
 
 	// Return the scene once everything is loaded
