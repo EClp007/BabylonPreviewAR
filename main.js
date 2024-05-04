@@ -64,19 +64,48 @@ const createScene = async () => {
 		},
 	});*/
 
-	const defaultXRExperience =
-		await scene.createDefaultXRExperienceAsync(
-			/* optional configuration options */
+	function isMobileDevice() {
+		const userAgent = navigator.userAgent;
+		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+			userAgent,
 		);
+	}
+	const sessionMode = isMobileDevice() ? "immersive-ar" : null;
+
+	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
+		uiOptions: {
+			sessionMode: sessionMode,
+		},
+		optionalFeatures: true,
+	});
 	if (!defaultXRExperience.baseExperience) {
-		const xr = await scene.createDefaultXRExperienceAsync({
-			uiOptions: {
-				sessionMode: "immersive-ar",
-			},
-			optionalFeatures: ["hit-test", "anchors"],
-		});
+		// XR is not supported
+		console.log("XR is not supported");
 	} else {
-		// all good, ready to go
+		const fm = defaultXRExperience.baseExperience.featuresManager;
+
+		const hitTest = fm.enableFeature(BABYLON.WebXRHitTest, "latest");
+
+		const dot = BABYLON.SphereBuilder.CreateSphere(
+			"dot",
+			{
+				diameter: 0.05,
+			},
+			scene,
+		);
+		dot.isVisible = false;
+		hitTest.onHitTestResultObservable.add((results) => {
+			if (results.length) {
+				dot.isVisible = true;
+				results[0].transformationMatrix.decompose(
+					dot.scaling,
+					dot.rotationQuaternion,
+					dot.position,
+				);
+			} else {
+				dot.isVisible = false;
+			}
+		});
 	}
 
 	// Return the scene once everything is loaded
