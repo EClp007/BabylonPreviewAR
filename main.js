@@ -18,12 +18,12 @@ const createScene = async () => {
 		"camera",
 		0,
 		0,
-		110,
+		10,
 		new BABYLON.Vector3(0, 0, 0),
 		scene,
 	);
 	camera.attachControl(true);
-	camera.setPosition(new BABYLON.Vector3(0, 30, 110));
+	camera.setPosition(new BABYLON.Vector3(0, 0, 10));
 	const light = new BABYLON.HemisphericLight(
 		"light",
 		new BABYLON.Vector3(0, 1, 0),
@@ -38,7 +38,7 @@ const createScene = async () => {
 	);
 	const model = result.meshes[0];
 	model.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
-	model.position = new BABYLON.Vector3(15, 0, 0);
+	model.position = new BABYLON.Vector3(0, 0, 0);
 	model.renderOverlay = true;
 	model.overlayColor = new BABYLON.Color3(0, 0, 0.5);
 	model.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
@@ -57,11 +57,22 @@ const createScene = async () => {
 		model.rotation.y += 0.01;
 	});
 
+	/*
 	const xr = await scene.createDefaultXRExperienceAsync({
 		uiOptions: {
 			sessionMode: "immersive-ar",
 		},
-	});
+	});*/
+
+	const defaultXRExperience =
+		await scene.createDefaultXRExperienceAsync(
+			/* optional configuration options */
+		);
+	if (!defaultXRExperience.baseExperience) {
+		// no xr support
+	} else {
+		// all good, ready to go
+	}
 
 	// Return the scene once everything is loaded
 	return scene;
