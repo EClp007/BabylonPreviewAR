@@ -3,7 +3,7 @@ import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
 
 // Get the canvas element from the DOM
-const canvas = document.getElementById("renderCanvas");
+const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
 
 // Create a Babylon.js engine
 const engine = new BABYLON.Engine(canvas);
@@ -64,7 +64,7 @@ const createScene = async () => {
 	ANote0VideoMat.roughness = 1;
 	ANote0Video.material = ANote0VideoMat;
 	scene.onPointerObservable.add((evt) => {
-		if (evt.pickInfo.pickedMesh === ANote0Video) {
+		if (evt.pickInfo && evt.pickInfo.pickedMesh === ANote0Video) {
 			if (ANote0VideoVidTex.video.paused) ANote0VideoVidTex.video.play();
 			else ANote0VideoVidTex.video.pause();
 			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
@@ -103,7 +103,7 @@ const createScene = async () => {
 
 	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
 		uiOptions: {
-			sessionMode: sessionMode,
+			sessionMode: sessionMode as XRSessionMode,
 		},
 		optionalFeatures: true,
 		disableTeleportation: true,
@@ -123,7 +123,7 @@ const createScene = async () => {
 			const hitTest = featureManager.enableFeature(
 				BABYLON.WebXRHitTest,
 				"latest",
-			);
+			) as BABYLON.WebXRHitTest;
 
 			model.position = new BABYLON.Vector3(5, 0, 0);
 
@@ -134,13 +134,13 @@ const createScene = async () => {
 				},
 				scene,
 			);
-			dot.isVisible = false;
+
 			hitTest.onHitTestResultObservable.add((results) => {
 				if (results.length) {
 					dot.isVisible = true;
 					results[0].transformationMatrix.decompose(
 						dot.scaling,
-						dot.rotationQuaternion,
+						dot.rotationQuaternion || undefined,
 						dot.position,
 					);
 				} else {
