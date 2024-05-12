@@ -3,7 +3,7 @@ import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
 
 // Get the canvas element from the DOM
-const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
+const canvas = document.getElementById("renderCanvas");
 
 // Create a Babylon.js engine
 const engine = new BABYLON.Engine(canvas);
@@ -42,7 +42,6 @@ const createScene = async () => {
 	model.overlayColor = new BABYLON.Color3(0, 0, 0.5);
 	model.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
 
-	/*
 	const planeOpts = {
 		height: 5.4762,
 		width: 7.3967,
@@ -71,7 +70,7 @@ const createScene = async () => {
 			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
 		}
 	}, BABYLON.PointerEventTypes.POINTERPICK);
-	*/
+
 	/*
   const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
     height: 100,
@@ -104,7 +103,7 @@ const createScene = async () => {
 
 	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
 		uiOptions: {
-			sessionMode: sessionMode as XRSessionMode,
+			sessionMode: sessionMode,
 		},
 		optionalFeatures: true,
 		disableTeleportation: true,
@@ -124,7 +123,7 @@ const createScene = async () => {
 			const hitTest = featureManager.enableFeature(
 				BABYLON.WebXRHitTest,
 				"latest",
-			) as BABYLON.WebXRHitTest;
+			);
 
 			model.position = new BABYLON.Vector3(5, 0, 0);
 
