@@ -42,6 +42,7 @@ const createScene = async () => {
 	model.overlayColor = new BABYLON.Color3(0, 0, 0.5);
 	model.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
 
+	/*
 	const planeOpts = {
 		height: 5.4762,
 		width: 7.3967,
@@ -70,7 +71,7 @@ const createScene = async () => {
 			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
 		}
 	}, BABYLON.PointerEventTypes.POINTERPICK);
-
+	*/
 	/*
   const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
     height: 100,
