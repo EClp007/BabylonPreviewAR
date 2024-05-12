@@ -12,23 +12,36 @@ export const createGUI = async (scene) => {
 	panel.position.z = -1.5;
 
 	// Function to add a button to the panel
-	const addButton = () => {
-		const button = new GUI.Button3D("orientation");
+	const addButtonVideo = () => {
+		const button = new GUI.Button3D("video");
 		panel.addControl(button);
 
 		button.onPointerUpObservable.add(() => {
-			panel.isVertical = !panel.isVertical;
 		});
 
 		const textBlock = new GUI.TextBlock();
-		textBlock.text = "Change Orientation";
+		textBlock.text = "Change video";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
+
+	const addButtonLogo = () => {
+		const button = new GUI.Button3D("logo");
+		panel.addControl(button);
+
+		button.onPointerUpObservable.add(() => {
+			
+		});
+
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Change logo";
 		textBlock.color = "white";
 		textBlock.fontSize = 24;
 		button.content = textBlock;
 	};
 
 	// Add multiple buttons using the addButton function
-	addButton();
-	addButton();
-	addButton();
+	addButtonVideo();
+	addButtonLogo();
 };
