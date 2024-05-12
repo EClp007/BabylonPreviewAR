@@ -9,9 +9,13 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@babylonjs/core": "^6.9.0",
+    "@babylonjs/core": "^7.0.0",
     "@babylonjs/inspector": "^6.9.0",
     "@babylonjs/loaders": "^6.9.0",
     "vite": "^4.3.2"
-  }
+  },
+  "dependencies": {
+    "@babylonjs/gui": "^7.6.0"
+  },
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

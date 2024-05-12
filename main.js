@@ -1,6 +1,7 @@
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
+import * as GUI from "@babylonjs/gui";
 
 // Get the canvas element from the DOM
 const canvas = document.getElementById("renderCanvas");
@@ -70,6 +71,35 @@ const createScene = async () => {
 			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
 		}
 	}, BABYLON.PointerEventTypes.POINTERPICK);
+
+	// Create the 3D UI manager
+	const manager = new GUI.GUI3DManager(scene);
+
+	// Create a horizontal stack panel
+	const panel = new GUI.StackPanel3D();
+	panel.margin = 0.02;
+
+	manager.addControl(panel);
+	panel.position.z = -1.5;
+
+	// Let's add some buttons!
+	const addButton = () => {
+		const button = new GUI.Button3D("orientation");
+		panel.addControl(button);
+		button.onPointerUpObservable.add(() => {
+			panel.isVertical = !panel.isVertical;
+		});
+
+		const text1 = new GUI.TextBlock();
+		text1.text = "change orientation";
+		text1.color = "white";
+		text1.fontSize = 24;
+		button.content = text1;
+	};
+
+	addButton();
+	addButton();
+	addButton();
 
 	/*
   const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
