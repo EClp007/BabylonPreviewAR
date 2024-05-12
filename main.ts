@@ -1,7 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
-import "@babylonjs/materials";
 
 // Get the canvas element from the DOM
 const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
