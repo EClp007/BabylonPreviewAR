@@ -91,6 +91,7 @@ const createScene = async () => {
 			sessionMode: "immersive-ar",
 		},
 	});*/
+	/* */
 
 	function isMobileDevice() {
 		const userAgent = navigator.userAgent;
