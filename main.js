@@ -6,7 +6,7 @@ import { tudLogo } from "./components/tudLogo";
 import { video } from "./components/video";
 import { isMobileDevice } from "./helpers/isMobileDevice";
 import { hitTest } from "./components/hitTest";
-import { createGUI } from "./components/GUI";
+import { createGUI } from "./components/gUI";
 import { vrMovement } from "./components/vrMovement";
 import { handtracking } from "./components/handtracking";
 
