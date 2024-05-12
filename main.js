@@ -1,7 +1,14 @@
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
-import * as GUI from "@babylonjs/gui";
+import { camera } from "./components/camera";
+import { tudLogo } from "./components/tudLogo";
+import { video } from "./components/video";
+import { isMobileDevice } from "./helpers/isMobileDevice";
+import { hitTest } from "./components/hitTest";
+import { createGUI } from "./components/GUI";
+import { vrMovement } from "./components/vrMovement";
+import { handtracking } from "./components/handtracking";
 
 // Get the canvas element from the DOM
 const canvas = document.getElementById("renderCanvas");
@@ -15,120 +22,14 @@ const createScene = async () => {
 	const scene = new BABYLON.Scene(engine);
 
 	// Create a default camera and light in the scene
-	const camera = new BABYLON.ArcRotateCamera(
-		"camera",
-		0,
-		0,
-		10,
-		new BABYLON.Vector3(0, 0, 0),
-		scene,
-	);
-	camera.attachControl(true);
-	camera.setPosition(new BABYLON.Vector3(0, 0, 10));
-	const light = new BABYLON.HemisphericLight(
-		"light",
-		new BABYLON.Vector3(0, 1, 0),
-		scene,
-	);
+	camera(scene);
 
-	const result = await BABYLON.SceneLoader.ImportMeshAsync(
-		"",
-		"TUD_Logo.stl",
-		"",
-		scene,
-	);
-	const model = result.meshes[0];
-	model.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
-	model.renderOverlay = true;
-	model.overlayColor = new BABYLON.Color3(0, 0, 0.5);
-	model.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
+	tudLogo(scene);
 
-	const planeOpts = {
-		height: 5.4762,
-		width: 7.3967,
-		sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-	};
-	const ANote0Video = BABYLON.MeshBuilder.CreatePlane(
-		"plane",
-		planeOpts,
-		scene,
-	);
-	const vidPos = new BABYLON.Vector3(0, 0, 0.1);
-	ANote0Video.position = vidPos;
-	const ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
-	const ANote0VideoVidTex = new BABYLON.VideoTexture(
-		"vidtex",
-		"babylonjs.mp4",
-		scene,
-	);
-	ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
-	ANote0VideoMat.roughness = 1;
-	ANote0Video.material = ANote0VideoMat;
-	scene.onPointerObservable.add((evt) => {
-		if (evt.pickInfo && evt.pickInfo.pickedMesh === ANote0Video) {
-			if (ANote0VideoVidTex.video.paused) ANote0VideoVidTex.video.play();
-			else ANote0VideoVidTex.video.pause();
-			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
-		}
-	}, BABYLON.PointerEventTypes.POINTERPICK);
+	video(scene);
 
-	// Create the 3D UI manager
-	const manager = new GUI.GUI3DManager(scene);
+	createGUI(scene);
 
-	// Create a horizontal stack panel
-	const panel = new GUI.StackPanel3D();
-	panel.margin = 0.02;
-
-	manager.addControl(panel);
-	panel.position.z = -1.5;
-
-	// Let's add some buttons!
-	const addButton = () => {
-		const button = new GUI.Button3D("orientation");
-		panel.addControl(button);
-		button.onPointerUpObservable.add(() => {
-			panel.isVertical = !panel.isVertical;
-		});
-
-		const text1 = new GUI.TextBlock();
-		text1.text = "change orientation";
-		text1.color = "white";
-		text1.fontSize = 24;
-		button.content = text1;
-	};
-
-	addButton();
-	addButton();
-	addButton();
-
-	/*
-  const ground = new BABYLON.MeshBuilder.CreateGround('ground', {
-    height: 100,
-    width : 100,
-  });
-
-  const groundCatMat = new BABYLON.StandardMaterial();
-  ground.material = groundCatMat;
-  groundCatMat.diffuseTexture = new BABYLON.Texture('/galaxy.jpg');*/
-
-	scene.registerBeforeRender(() => {
-		model.rotation.y += 0.01;
-	});
-
-	/*
-	const xr = await scene.createDefaultXRExperienceAsync({
-		uiOptions: {
-			sessionMode: "immersive-ar",
-		},
-	});*/
-	/* */
-
-	function isMobileDevice() {
-		const userAgent = navigator.userAgent;
-		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-			userAgent,
-		);
-	}
 	const sessionMode = isMobileDevice() ? "immersive-ar" : null;
 
 	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
@@ -150,56 +51,12 @@ const createScene = async () => {
 			);
 		if (supported) {
 			// ar
-			const hitTest = featureManager.enableFeature(
-				BABYLON.WebXRHitTest,
-				"latest",
-			);
-
-			model.position = new BABYLON.Vector3(5, 0, 0);
-
-			const dot = BABYLON.MeshBuilder.CreateSphere(
-				"dot",
-				{
-					diameter: 0.05,
-				},
-				scene,
-			);
-
-			hitTest.onHitTestResultObservable.add((results) => {
-				if (results.length) {
-					dot.isVisible = true;
-					results[0].transformationMatrix.decompose(
-						dot.scaling,
-						dot.rotationQuaternion || undefined,
-						dot.position,
-					);
-				} else {
-					dot.isVisible = false;
-				}
-			});
+			hitTest(scene);
 		} else {
 			// vr
-
-			featureManager.enableFeature(
-				BABYLON.WebXRFeatureName.MOVEMENT,
-				"latest",
-				{
-					xrInput: defaultXRExperience.input,
-				},
-			);
+			vrMovement(featureManager, defaultXRExperience);
 			// Enable hand tracking
-			try {
-				featureManager.enableFeature(
-					BABYLON.WebXRFeatureName.HAND_TRACKING,
-					"latest",
-					{
-						xrInput: defaultXRExperience.input,
-						// other options
-					},
-				);
-			} catch (e) {
-				console.log(e);
-			}
+			handtracking(featureManager, defaultXRExperience);
 		}
 	}
 
