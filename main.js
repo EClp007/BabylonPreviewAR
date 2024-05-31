@@ -205,7 +205,7 @@ const createScene = async () => {
 
     const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
-        sessionMode: "immersive-vr", // "immersive-ar"
+        sessionMode: "immersive-ar", // "immersive-vr"
     },
     optionalFeatures: true,
 });
