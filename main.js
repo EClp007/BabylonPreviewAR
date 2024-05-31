@@ -149,29 +149,6 @@ const createScene = async () => {
         button.content = textBlock;
     };
 
-    let sessionMode = isMobileDevice() ? "immersive-ar" : "immersive-vr";
-    // Function to add AR/VR toggle button to the panel
-    const addButtonToggle = () => {
-        const button = new GUI.Button3D("toggle");
-        panel.addControl(button);
-
-        button.onPointerUpObservable.add(async () => {
-            const xrSessionManager = defaultXRExperience.baseExperience.sessionManager;
-            const currentSessionMode = xrSessionManager.sessionMode;
-            if(sessionMode === "immersive-ar") {
-                sessionMode = "immersive-vr";
-            } else {
-                sessionMode = "immersive-ar";
-            }
-        });
-
-        const textBlock = new GUI.TextBlock();
-        textBlock.text = "Toggle AR/VR";
-        textBlock.color = "white";
-        textBlock.fontSize = 24;
-        button.content = textBlock;
-    };
-
     let activeHitTest = null;
 
     // Function to add hit test button to the panel
@@ -227,11 +204,12 @@ const createScene = async () => {
 
     const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
-        sessionMode: sessionMode,
+        sessionMode: "immersive-ar", // "immersive-vr"
     },
     optionalFeatures: true,
     disableTeleportation: true,
 });
+
 
     if (!defaultXRExperience.baseExperience) {
         // XR is not supported
@@ -245,7 +223,7 @@ const createScene = async () => {
             );
         if (supported) {
             // AR
-            addButtonHitTest(featureManager);
+            addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
         } else {
             // VR
             vrMovement(featureManager, defaultXRExperience);
@@ -274,7 +252,6 @@ const createScene = async () => {
         addButtonVideo();
         addButtonLogo();
         addButtonToggle();
-        addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
         addButtonLightToggle();
         addButtonSkyboxToggle();
     
