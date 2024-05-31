@@ -50,7 +50,8 @@ const createScene = async () => {
     const scene = new BABYLON.Scene(engine);
 
     // Create a default camera and light in the scene
-    camera(scene);
+    const camera = new BABYLON.ArcRotateCamera("camera", 4.577, 1.553, 4.1529, new BABYLON.Vector3(0, 0, 2), scene);
+    camera.attachControl(canvas, true);
 
     // Create the 3D GUI manager
     const manager = new GUI.GUI3DManager(scene);
