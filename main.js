@@ -207,7 +207,6 @@ const createScene = async () => {
         sessionMode: "immersive-vr", // "immersive-ar"
     },
     optionalFeatures: true,
-    disableTeleportation: true,
 });
 
 
