@@ -149,6 +149,7 @@ const createScene = async () => {
         button.content = textBlock;
     };
 
+    let sessionMode = isMobileDevice() ? "immersive-ar" : "immersive-vr";
     // Function to add AR/VR toggle button to the panel
     const addButtonToggle = () => {
         const button = new GUI.Button3D("toggle");
@@ -157,12 +158,10 @@ const createScene = async () => {
         button.onPointerUpObservable.add(async () => {
             const xrSessionManager = defaultXRExperience.baseExperience.sessionManager;
             const currentSessionMode = xrSessionManager.sessionMode;
-            if (currentSessionMode === "immersive-ar") {
-                await xrSessionManager.endXRSessionAsync();
-                await defaultXRExperience.baseExperience.enterXRAsync("immersive-vr", "local-floor");
+            if(sessionMode === "immersive-ar") {
+                sessionMode = "immersive-vr";
             } else {
-                await xrSessionManager.endXRSessionAsync();
-                await defaultXRExperience.baseExperience.enterXRAsync("immersive-ar", "local-floor");
+                sessionMode = "immersive-ar";
             }
         });
 
@@ -225,8 +224,6 @@ const createScene = async () => {
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
 
-
-    const sessionMode = isMobileDevice() ? "immersive-vr" : "immersive-ar";
 
     const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
