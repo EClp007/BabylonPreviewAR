@@ -225,15 +225,37 @@ const createScene = async () => {
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
 
-    const sessionMode = isMobileDevice() ? "immersive-ar" : "immersive-vr";
 
-            const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
-            uiOptions: {
-                sessionMode: sessionMode,
-            },
-            optionalFeatures: true,
-            disableTeleportation: true,
-        });
+    const sessionMode = isMobileDevice() ? "immersive-vr" : "immersive-ar";
+
+    const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
+    uiOptions: {
+        sessionMode: sessionMode,
+    },
+    optionalFeatures: true,
+    disableTeleportation: true,
+});
+
+    if (!defaultXRExperience.baseExperience) {
+        // XR is not supported
+        console.log("XR is not supported");
+    } else {
+        const featureManager = defaultXRExperience.baseExperience.featuresManager;
+
+        const supported =
+            await defaultXRExperience.baseExperience.sessionManager.isSessionSupportedAsync(
+                "immersive-ar",
+            );
+        if (supported) {
+            // AR
+            addButtonHitTest(featureManager);
+        } else {
+            // VR
+            vrMovement(featureManager, defaultXRExperience);
+            // Enable hand tracking
+            handtracking(featureManager, defaultXRExperience);
+        }
+    }
     
 
     // Function to add skybox toggle button to the panel
@@ -258,28 +280,6 @@ const createScene = async () => {
         addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
         addButtonLightToggle();
         addButtonSkyboxToggle();
-    
-    
-        if (!defaultXRExperience.baseExperience) {
-            // XR is not supported
-            console.log("XR is not supported");
-        } else {
-            const featureManager = defaultXRExperience.baseExperience.featuresManager;
-    
-            const supported =
-                await defaultXRExperience.baseExperience.sessionManager.isSessionSupportedAsync(
-                    "immersive-ar",
-                );
-            if (supported) {
-                // AR
-                addButtonHitTest(featureManager);
-            } else {
-                // VR
-                vrMovement(featureManager, defaultXRExperience);
-                // Enable hand tracking
-                handtracking(featureManager, defaultXRExperience);
-            }
-        }
     
         // Return the scene once everything is loaded
         return scene;
