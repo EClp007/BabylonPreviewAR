@@ -202,7 +202,7 @@ const createScene = async () => {
 
     const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
-        sessionMode: "immersive-ar", // "immersive-vr"
+        sessionMode: "immersive-vr", // "immersive-ar"
     },
     optionalFeatures: true,
 });
@@ -219,7 +219,7 @@ const createScene = async () => {
                 "immersive-ar", 
             );
             console.log(supported);
-        if (supported) {
+        if (!supported) {
             // AR
             addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
             handtracking(featureManager, defaultXRExperience);
