@@ -2,14 +2,41 @@ import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
 import { camera } from "./components/camera";
-import { tudLogo } from "./components/tudLogo";
-import { video } from "./components/video";
 import { isMobileDevice } from "./helpers/isMobileDevice";
-import { hitTest } from "./components/hitTest";
 import { createGUI } from "./components/gUI";
 import { vrMovement } from "./components/vrMovement";
 import { handtracking } from "./components/handtracking";
 import * as GUI from "@babylonjs/gui";
+
+// Hit test function
+export const hitTest = async (scene, featureManager) => {
+	const hitTest = featureManager.enableFeature(BABYLON.WebXRHitTest, "latest");
+
+	model.position = new BABYLON.Vector3(5, 0, 0);
+
+	const dot = BABYLON.MeshBuilder.CreateSphere(
+		"dot",
+		{
+			diameter: 0.05,
+		},
+		scene,
+	);
+
+	hitTest.onHitTestResultObservable.add((results) => {
+		if (results.length) {
+			dot.isVisible = true;
+			results[0].transformationMatrix.decompose(
+				dot.scaling,
+				dot.rotationQuaternion || undefined,
+				dot.position,
+			);
+		} else {
+			dot.isVisible = false;
+		}
+	});
+
+	return hitTest;
+};
 
 // Get the canvas element from the DOM
 const canvas = document.getElementById("renderCanvas");
@@ -148,6 +175,29 @@ const createScene = async () => {
 		button.content = textBlock;
 	};
 
+	let activeHitTest = null;
+
+	// Function to add hit test button to the panel
+	const addButtonHitTest = (featureManager) => {
+		const button = new GUI.Button3D("hitTest");
+		panel.addControl(button);
+
+		button.onPointerUpObservable.add(async () => {
+			if (activeHitTest) {
+				activeHitTest.dispose();
+				activeHitTest = null;
+			} else {
+				activeHitTest = await hitTest(scene, featureManager);
+			}
+		});
+
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Toggle Hit Test";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
+
 	// Add multiple buttons using the addButton function
 	addButtonVideo();
 	addButtonLogo();
@@ -174,7 +224,7 @@ const createScene = async () => {
 			);
 		if (supported) {
 			// ar
-			hitTest(scene);
+			addButtonHitTest(featureManager);
 		} else {
 			// vr
 			vrMovement(featureManager, defaultXRExperience);
