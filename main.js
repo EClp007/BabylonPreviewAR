@@ -1,9 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import { Inspector } from "@babylonjs/inspector";
-import { camera } from "./components/camera";
-import { isMobileDevice } from "./helpers/isMobileDevice";
-import { createGUI } from "./components/gUI";
 import { vrMovement } from "./components/vrMovement";
 import { handtracking } from "./components/handtracking";
 import * as GUI from "@babylonjs/gui";
@@ -205,7 +202,7 @@ const createScene = async () => {
 
     const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
     uiOptions: {
-        sessionMode: "immersive-ar", // "immersive-vr"
+        sessionMode: "immersive-vr", // "immersive-ar"
     },
     optionalFeatures: true,
 });
@@ -215,13 +212,8 @@ const createScene = async () => {
         // XR is not supported
         console.log("XR is not supported");
     } else {
-        const featureManager = defaultXRExperience.baseExperience.featuresManager;
 
-        const supported =
-            await defaultXRExperience.baseExperience.sessionManager.isSessionSupportedAsync(
-                "immersive-ar", 
-            );
-        if (supported) {
+        if (false) {
             // AR
             addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
             handtracking(featureManager, defaultXRExperience);
