@@ -124,9 +124,34 @@ const createScene = async () => {
 		button.content = textBlock;
 	};
 
+	// Function to add AR/VR toggle button to the panel
+	const addButtonToggle = () => {
+		const button = new GUI.Button3D("toggle");
+		panel.addControl(button);
+
+		button.onPointerUpObservable.add(async () => {
+			const xrSessionManager = defaultXRExperience.baseExperience.sessionManager;
+			const currentSessionMode = xrSessionManager.sessionMode;
+			if (currentSessionMode === "immersive-ar") {
+				await xrSessionManager.endSessionAsync();
+				defaultXRExperience.baseExperience.enterExitXRAsync("immersive-vr");
+			} else {
+				await xrSessionManager.endSessionAsync();
+				defaultXRExperience.baseExperience.enterExitXRAsync("immersive-ar");
+			}
+		});
+
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Toggle AR/VR";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
+
 	// Add multiple buttons using the addButton function
 	addButtonVideo();
 	addButtonLogo();
+	addButtonToggle();
 
 	const sessionMode = isMobileDevice() ? "immersive-ar" : null;
 
