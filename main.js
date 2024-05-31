@@ -251,7 +251,6 @@ const createScene = async () => {
         // Add multiple buttons using the addButton functions
         addButtonVideo();
         addButtonLogo();
-        addButtonToggle();
         addButtonLightToggle();
         addButtonSkyboxToggle();
     
