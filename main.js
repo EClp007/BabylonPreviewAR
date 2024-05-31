@@ -198,10 +198,44 @@ const createScene = async () => {
 		button.content = textBlock;
 	};
 
+	    // Function to add light toggle button to the panel
+		const addButtonLightToggle = () => {
+			const button = new GUI.Button3D("lightToggle");
+			panel.addControl(button);
+	
+			button.onPointerUpObservable.add(() => {
+				light.isEnabled = !light.isEnabled;
+			});
+	
+			const textBlock = new GUI.TextBlock();
+			textBlock.text = "Toggle Light";
+			textBlock.color = "white";
+			textBlock.fontSize = 24;
+			button.content = textBlock;
+		};
+	
+		// Function to add skybox toggle button to the panel
+		const addButtonSkyboxToggle = () => {
+			const button = new GUI.Button3D("skyboxToggle");
+			panel.addControl(button);
+	
+			button.onPointerUpObservable.add(() => {
+				skybox.isVisible = !skybox.isVisible;
+			});
+	
+			const textBlock = new GUI.TextBlock();
+			textBlock.text = "Toggle Skybox";
+			textBlock.color = "white";
+			textBlock.fontSize = 24;
+			button.content = textBlock;
+		};
+
 	// Add multiple buttons using the addButton function
 	addButtonVideo();
 	addButtonLogo();
 	addButtonToggle();
+	addButtonLightToggle();
+	addButtonSkyboxToggle();
 
 	const sessionMode = isMobileDevice() ? "immersive-ar" : null;
 
