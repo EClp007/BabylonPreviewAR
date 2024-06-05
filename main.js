@@ -4,35 +4,39 @@ import { Inspector } from "@babylonjs/inspector";
 import { vrMovement } from "./components/vrMovement";
 import { handtracking } from "./components/handtracking";
 import * as GUI from "@babylonjs/gui";
+import { FireProceduralTexture } from "@babylonjs/procedural-textures";
 
 // Hit test function
 export const hitTest = async (scene, featureManager) => {
-    const hitTestFeature = featureManager.enableFeature(BABYLON.WebXRHitTest, "latest");
-    const model = new BABYLON.Mesh("model", scene);
-    model.position = new BABYLON.Vector3(5, 0, 0);
+	const hitTestFeature = featureManager.enableFeature(
+		BABYLON.WebXRHitTest,
+		"latest",
+	);
+	const model = new BABYLON.Mesh("model", scene);
+	model.position = new BABYLON.Vector3(5, 0, 0);
 
-    const dot = BABYLON.MeshBuilder.CreateSphere(
-        "dot",
-        {
-            diameter: 0.05,
-        },
-        scene,
-    );
+	const dot = BABYLON.MeshBuilder.CreateSphere(
+		"dot",
+		{
+			diameter: 0.05,
+		},
+		scene,
+	);
 
-    hitTestFeature.onHitTestResultObservable.add((results) => {
-        if (results.length) {
-            dot.isVisible = true;
-            results[0].transformationMatrix.decompose(
-                dot.scaling,
-                dot.rotationQuaternion || undefined,
-                dot.position,
-            );
-        } else {
-            dot.isVisible = false;
-        }
-    });
+	hitTestFeature.onHitTestResultObservable.add((results) => {
+		if (results.length) {
+			dot.isVisible = true;
+			results[0].transformationMatrix.decompose(
+				dot.scaling,
+				dot.rotationQuaternion || undefined,
+				dot.position,
+			);
+		} else {
+			dot.isVisible = false;
+		}
+	});
 
-    return hitTestFeature;
+	return hitTestFeature;
 };
 
 // Get the canvas element from the DOM
@@ -43,234 +47,356 @@ const engine = new BABYLON.Engine(canvas, true);
 
 // Asynchronous function to create the scene
 const createScene = async () => {
-    // Create a new Babylon.js scene
-    const scene = new BABYLON.Scene(engine);
+	// Create a new Babylon.js scene
+	const scene = new BABYLON.Scene(engine);
 
-    // Create a default camera and light in the scene
-    const camera = new BABYLON.ArcRotateCamera("camera", 4.577, 1.553, 4.1529, new BABYLON.Vector3(0, 0, 2), scene);
-    camera.attachControl(canvas, true);
+	// Create a default camera and light in the scene
+	const camera = new BABYLON.ArcRotateCamera(
+		"camera",
+		4.577,
+		1.553,
+		4.1529,
+		new BABYLON.Vector3(0, 0, 2),
+		scene,
+	);
+	camera.attachControl(canvas, true);
 
-    // Create the 3D GUI manager
-    const manager = new GUI.GUI3DManager(scene);
+	// Erstellen des Materials für den Boden
+	const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+	// Aktivieren des Drahtgittermodus
+	groundMaterial.wireframe = true;
+	// Erstellen des Bodens aus der Höhenkarte
+	const groundFromHM = BABYLON.MeshBuilder.CreateGroundFromHeightMap(
+		"groundHM", // Name
+		"Heightmap_Norddeutschland.jpg", // URL der Höhenkarte
+		{
+			// Optionen-Objekt
+			width: 100, // Breite des Bodens
+			height: 100, // Höhe des Bodens
+			subdivisions: 100, // Anzahl der Unterteilungen
+			minHeight: 0, // minimale Höhe
+			maxHeight: 10, // maximale Höhe
+			onReady: () => {
+				console.log("Ground created from height map");
+			},
+			updatable: false, // ob das Mesh aktualisierbar ist
+		},
+		scene, // die Szene
+	);
+	groundFromHM.position.y = -20; // Position des Bodens
+	// Zuweisen des Materials zum Boden
+	groundFromHM.material = groundMaterial;
+	const material = new BABYLON.StandardMaterial("texture1", scene);
+	material.diffuseTexture = new BABYLON.Texture(
+		"Heightmap_Norddeutschland.jpg",
+		scene,
+	);
+	material.emissiveTexture = new BABYLON.Texture(
+		"Heightmap_Norddeutschland.jpg",
+		scene,
+	); // Emissive Textur für Leuchten
+	const picHM = BABYLON.MeshBuilder.CreatePlane(
+		"plane",
+		{ height: 2, width: 2 },
+		scene,
+	);
+	picHM.material = material;
+	// Positioniere das Bild vor der Kamera
+	picHM.position.z = 5;
+	//picHM.scaling = new BABYLON.Vector3(2, 2, 2);
 
-    // Create a horizontal stack panel
-    const panel = new GUI.SpherePanel();
-    panel.margin = 0.2;
-    manager.addControl(panel);
-    panel.isVertical = false;
-    panel.columns = 1;
-    panel.position = new BABYLON.Vector3(3, 0, 0);
-    panel.isBillboard = true;
+	// Create the 3D GUI manager
+	const manager = new GUI.GUI3DManager(scene);
 
-    // Create a video
-    const planeOpts = {
-        height: 2.4762,
-        width: 3.3967,
-        sideOrientation: BABYLON.Mesh.DOUBLESIDE,
-    };
-    const ANote0Video = BABYLON.MeshBuilder.CreatePlane(
-        "plane",
-        planeOpts,
-        scene,
-    );
-    const vidPos = new BABYLON.Vector3(0, 0, 0.1);
-    ANote0Video.position = vidPos;
-    const ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
-    const ANote0VideoVidTex = new BABYLON.VideoTexture(
-        "vidtex",
-        "babylonjs.mp4",
-        scene,
-    );
-    ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
-    ANote0VideoMat.roughness = 1;
-    ANote0Video.material = ANote0VideoMat;
-    ANote0VideoVidTex.video.muted = true;
-    ANote0Video.isVisible = false;
-    ANote0Video.position.z = 5;
-    scene.onPointerObservable.add((evt) => {
-        if (evt.pickInfo && evt.pickInfo.pickedMesh === ANote0Video) {
-            if (ANote0VideoVidTex.video.paused) ANote0VideoVidTex.video.play();
-            else ANote0VideoVidTex.video.pause();
-            console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
-        }
-    }, BABYLON.PointerEventTypes.POINTERPICK);
+	// Create a horizontal stack panel
+	const panel = new GUI.SpherePanel();
+	panel.margin = 0.2;
+	manager.addControl(panel);
+	panel.isVertical = false;
+	panel.columns = 1;
+	panel.position = new BABYLON.Vector3(3, 0, 0);
+	panel.isBillboard = true;
 
-    // Function to add a button to the panel
-    const addButtonVideo = () => {
-        const button = new GUI.Button3D("video");
-        panel.addControl(button);
+	// Create a video
+	const planeOpts = {
+		height: 2.4762,
+		width: 3.3967,
+		sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+	};
+	const ANote0Video = BABYLON.MeshBuilder.CreatePlane(
+		"plane",
+		planeOpts,
+		scene,
+	);
+	const vidPos = new BABYLON.Vector3(0, 0, 0.1);
+	ANote0Video.position = vidPos;
+	const ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
+	const ANote0VideoVidTex = new BABYLON.VideoTexture(
+		"vidtex",
+		"babylonjs.mp4",
+		scene,
+	);
+	ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
+	ANote0VideoMat.roughness = 1;
+	ANote0Video.material = ANote0VideoMat;
+	ANote0VideoVidTex.video.muted = true;
+	ANote0Video.isVisible = false;
+	ANote0Video.position.z = 5;
+	scene.onPointerObservable.add((evt) => {
+		if (evt.pickInfo && evt.pickInfo.pickedMesh === ANote0Video) {
+			if (ANote0VideoVidTex.video.paused) ANote0VideoVidTex.video.play();
+			else ANote0VideoVidTex.video.pause();
+			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
+		}
+	}, BABYLON.PointerEventTypes.POINTERPICK);
 
-        button.onPointerUpObservable.add(() => {
-            ANote0Video.isVisible = !ANote0Video.isVisible;
-            logoModel.isVisible = false;
-        });
+	// Create a sphere with a fire texture
+	const plane = BABYLON.MeshBuilder.CreateSphere("plane", scene);
+	plane.scaling = new BABYLON.Vector3(2, 2, 2);
+	plane.position = new BABYLON.Vector3(0, 0, 5);
+	const planeMat = new BABYLON.StandardMaterial("planeMat", scene);
+	plane.material = planeMat;
+	const fireTexture = new FireProceduralTexture("perlin", 256, scene);
+	planeMat.emissiveTexture = fireTexture;
 
-        const textBlock = new GUI.TextBlock();
-        textBlock.text = "Change video";
-        textBlock.color = "white";
-        textBlock.fontSize = 24;
-        button.content = textBlock;
-    };
+	// Function to add a button to the panel
+	const addButtonVideo = () => {
+		const button = new GUI.Button3D("video");
+		panel.addControl(button);
 
-    // Load the TUD logo
-    const logo = await BABYLON.SceneLoader.ImportMeshAsync(
-        "", // Import all meshes
-        "TUD_Logo.stl",
-        "",
-        scene,
-    );
-    const logoModel = logo.meshes[0];
-    logoModel.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
-    logoModel.renderOverlay = true;
-    logoModel.overlayColor = new BABYLON.Color3(0, 0, 0.5);
-    logoModel.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
-    logoModel.isVisible = false;
-    logoModel.position.z = 3;
-    // Register a function to be called before every frame render
-    scene.onBeforeRenderObservable.add(() => {
-        logoModel.rotation.y += 0.01;
-    });
-    // Function to add a logo button to the panel
-    const addButtonLogo = () => {
-        const button = new GUI.Button3D("logo");
-        panel.addControl(button);
+		button.onPointerUpObservable.add(() => {
+			ANote0Video.isVisible = !ANote0Video.isVisible;
+			logoModel.isVisible = false;
+			plane.isVisible = false;
+			groundFromHM.isVisible = false;
+			picHM.isVisible = false;
+		});
 
-        button.onPointerUpObservable.add(() => {
-            logoModel.isVisible = !logoModel.isVisible;
-            ANote0Video.isVisible = false;
-        });
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Change video";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
 
-        const textBlock = new GUI.TextBlock();
-        textBlock.text = "Change logo";
-        textBlock.color = "white";
-        textBlock.fontSize = 24;
-        button.content = textBlock;
-    };
+	const addButtonSphere = () => {
+		const button = new GUI.Button3D("logo");
+		panel.addControl(button);
 
-    let activeHitTest = null;
+		button.onPointerUpObservable.add(() => {
+			ANote0Video.isVisible = false;
+			logoModel.isVisible = false;
+			plane.isVisible = !plane.isVisible;
+			groundFromHM.isVisible = false;
+			picHM.isVisible = false;
+		});
 
-    // Function to add hit test button to the panel
-    const addButtonHitTest = (featureManager) => {
-        const button = new GUI.Button3D("hitTest");
-        panel.addControl(button);
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Change Sphere";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
 
-        button.onPointerUpObservable.add(async () => {
-            if (activeHitTest) {
-                activeHitTest.dispose();
-                activeHitTest = null;
-            } else {
-                activeHitTest = await hitTest(scene, featureManager);
-            }
-        });
+	const addButtonGround = () => {
+		const button = new GUI.Button3D("logo");
+		panel.addControl(button);
 
-        const textBlock = new GUI.TextBlock();
-        textBlock.text = "Toggle Hit Test";
-        textBlock.color = "white";
-        textBlock.fontSize = 24;
-        button.content = textBlock;
-    };
+		button.onPointerUpObservable.add(() => {
+			ANote0Video.isVisible = false;
+			logoModel.isVisible = false;
+			plane.isVisible = false;
+			groundFromHM.isVisible = !groundFromHM.isVisible;
+			picHM.isVisible = !picHM.isVisible;
+		});
 
-    // Light definition (assuming there is a light to toggle)
-    const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Ground";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
 
-    // Function to add light toggle button to the panel
-    const addButtonLightToggle = () => {
-        const button = new GUI.Button3D("lightToggle");
-        panel.addControl(button);
+	// Load the TUD logo
+	const logo = await BABYLON.SceneLoader.ImportMeshAsync(
+		"", // Import all meshes
+		"TUD_Logo.stl",
+		"",
+		scene,
+	);
+	const logoModel = logo.meshes[0];
+	logoModel.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
+	logoModel.renderOverlay = true;
+	logoModel.overlayColor = new BABYLON.Color3(0, 0, 0.5);
+	logoModel.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
+	logoModel.isVisible = false;
+	logoModel.position.z = 3;
+	// Register a function to be called before every frame render
+	scene.onBeforeRenderObservable.add(() => {
+		logoModel.rotation.y += 0.01;
+	});
+	// Function to add a logo button to the panel
+	const addButtonLogo = () => {
+		const button = new GUI.Button3D("logo");
+		panel.addControl(button);
 
-        button.onPointerUpObservable.add(() => {
-            light.setEnabled(!light.isEnabled());
-        });
+		button.onPointerUpObservable.add(() => {
+			logoModel.isVisible = !logoModel.isVisible;
+			ANote0Video.isVisible = false;
+			plane.isVisible = false;
+			groundFromHM.isVisible = false;
+			picHM.isVisible = false;
+		});
 
-        const textBlock = new GUI.TextBlock();
-        textBlock.text = "Toggle Light";
-        textBlock.color = "white";
-        textBlock.fontSize = 24;
-        button.content = textBlock;
-    };
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Change logo";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
 
-    // Skybox definition (assuming there is a skybox to toggle)
-    const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
-    const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox", scene);
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skybox.material = skyboxMaterial;
+	let activeHitTest = null;
 
+	// Function to add hit test button to the panel
+	const addButtonHitTest = (featureManager) => {
+		const button = new GUI.Button3D("hitTest");
+		panel.addControl(button);
 
-    const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
-    uiOptions: {
-        sessionMode: "immersive-vr", // "immersive-ar"
-    },
-    optionalFeatures: true,
+		button.onPointerUpObservable.add(async () => {
+			if (activeHitTest) {
+				activeHitTest.dispose();
+				activeHitTest = null;
+			} else {
+				activeHitTest = await hitTest(scene, featureManager);
+			}
+		});
+
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Toggle Hit Test";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
+
+	// Light definition (assuming there is a light to toggle)
+	const light = new BABYLON.HemisphericLight(
+		"light",
+		new BABYLON.Vector3(0, 1, 0),
+		scene,
+	);
+	light.intensity = 0.5;
+
+	const light2 = new BABYLON.PointLight(
+		"light2",
+		new BABYLON.Vector3(0, 5, 0),
+		scene,
+	);
+	light2.diffuse = new BABYLON.Color3(1, 0, 1);
+	light2.specular = new BABYLON.Color3(1, 0, 1);
+
+	// Function to add light toggle button to the panel
+	const addButtonLightToggle = () => {
+		const button = new GUI.Button3D("lightToggle");
+		panel.addControl(button);
+
+		button.onPointerUpObservable.add(() => {
+			light2.setEnabled(!light2.isEnabled());
+		});
+
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Toggle Light";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
+
+	// Skybox definition (assuming there is a skybox to toggle)
+	const skybox = BABYLON.MeshBuilder.CreateBox(
+		"skyBox",
+		{ size: 1000.0 },
+		scene,
+	);
+	const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+	skyboxMaterial.backFaceCulling = false;
+	skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+		"textures/skybox",
+		scene,
+	);
+	skyboxMaterial.reflectionTexture.coordinatesMode =
+		BABYLON.Texture.SKYBOX_MODE;
+	skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+	skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+	skybox.material = skyboxMaterial;
+
+	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
+		uiOptions: {
+			sessionMode: "immersive-vr", // "immersive-ar"
+		},
+		optionalFeatures: true,
+	});
+
+	if (!defaultXRExperience.baseExperience) {
+		// XR is not supported
+		console.log("XR is not supported");
+	} else {
+		const featureManager = defaultXRExperience.baseExperience.featuresManager;
+
+		const supported =
+			await defaultXRExperience.baseExperience.sessionManager.isSessionSupportedAsync(
+				"immersive-ar",
+			);
+		console.log(supported);
+		if (!supported) {
+			// AR
+			addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
+			handtracking(featureManager, defaultXRExperience);
+		} else {
+			// VR
+			vrMovement(featureManager, defaultXRExperience);
+			// Enable hand tracking
+			handtracking(featureManager, defaultXRExperience);
+		}
+	}
+
+	// Function to add skybox toggle button to the panel
+	const addButtonSkyboxToggle = () => {
+		const button = new GUI.Button3D("skyboxToggle");
+		panel.addControl(button);
+
+		button.onPointerUpObservable.add(() => {
+			skybox.isVisible = !skybox.isVisible;
+		});
+
+		const textBlock = new GUI.TextBlock();
+		textBlock.text = "Toggle Skybox";
+		textBlock.color = "white";
+		textBlock.fontSize = 24;
+		button.content = textBlock;
+	};
+	// Add multiple buttons using the addButton functions
+	addButtonVideo();
+	addButtonLogo();
+	addButtonSphere();
+	addButtonLightToggle();
+	addButtonSkyboxToggle();
+	addButtonGround();
+
+	// Return the scene once everything is loaded
+	return scene;
+};
+
+// Call the createScene function and wait for the scene to be created
+createScene().then((scene) => {
+	// Run the render loop to continuously render the scene
+	engine.runRenderLoop(() => {
+		scene.render();
+	});
+
+	// Enable Babylon Inspector for debugging
+	Inspector.Show(scene, { enablePopup: false });
 });
 
-
-    if (!defaultXRExperience.baseExperience) {
-        // XR is not supported
-        console.log("XR is not supported");
-    } else {
-        const featureManager = defaultXRExperience.baseExperience.featuresManager;
-
-        const supported =
-            await defaultXRExperience.baseExperience.sessionManager.isSessionSupportedAsync(
-                "immersive-ar", 
-            );
-            console.log(supported);
-        if (!supported) {
-            // AR
-            addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
-            handtracking(featureManager, defaultXRExperience);
-        } else {
-            // VR
-            vrMovement(featureManager, defaultXRExperience);
-            // Enable hand tracking
-            handtracking(featureManager, defaultXRExperience);
-        }
-    }
-    
-
-    // Function to add skybox toggle button to the panel
-    const addButtonSkyboxToggle = () => {
-        const button = new GUI.Button3D("skyboxToggle");
-        panel.addControl(button);
-
-        button.onPointerUpObservable.add(() => {
-            skybox.isVisible = !skybox.isVisible;
-        });
-
-        const textBlock = new GUI.TextBlock();
-        textBlock.text = "Toggle Skybox";
-        textBlock.color = "white";
-        textBlock.fontSize = 24;
-        button.content = textBlock;
-    }
-        // Add multiple buttons using the addButton functions
-        addButtonVideo();
-        addButtonLogo();
-        addButtonLightToggle();
-        addButtonSkyboxToggle();
-    
-        // Return the scene once everything is loaded
-        return scene;
-    };
-    
-    // Call the createScene function and wait for the scene to be created
-    createScene().then((scene) => {
-        // Run the render loop to continuously render the scene
-        engine.runRenderLoop(() => {
-            scene.render();
-        });
-    
-        // Enable Babylon Inspector for debugging
-        Inspector.Show(scene, { enablePopup: false });
-    });
-    
-    // Handle window resizing
-    window.addEventListener("resize", () => {
-        engine.resize();
-    });
-    
-   
+// Handle window resizing
+window.addEventListener("resize", () => {
+	engine.resize();
+});
