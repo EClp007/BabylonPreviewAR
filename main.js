@@ -350,7 +350,7 @@ const addButtonLightToggle = (panel, scene) => {
 	});
 
 	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Toggle Light";
+	textBlock.text = "Magenta Spotlight";
 	textBlock.color = "white";
 	textBlock.fontSize = 24;
 	button.content = textBlock;
@@ -366,7 +366,7 @@ const addButtonSkyboxToggle = (panel, skyBox) => {
 	});
 
 	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Toggle Skybox";
+	textBlock.text = "Skybox";
 	textBlock.color = "white";
 	textBlock.fontSize = 24;
 	button.content = textBlock;
