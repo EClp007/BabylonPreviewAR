@@ -86,6 +86,7 @@ const createScene = async () => {
 	groundFromHM.position.y = -20; // Position des Bodens
 	// Zuweisen des Materials zum Boden
 	groundFromHM.material = groundMaterial;
+	groundFromHM.isVisible = false;
 	const material = new BABYLON.StandardMaterial("texture1", scene);
 	material.diffuseTexture = new BABYLON.Texture(
 		"Heightmap_Norddeutschland.jpg",
@@ -103,6 +104,7 @@ const createScene = async () => {
 	picHM.material = material;
 	// Positioniere das Bild vor der Kamera
 	picHM.position.z = 5;
+	picHM.isVisible = false;
 	//picHM.scaling = new BABYLON.Vector3(2, 2, 2);
 
 	// Create the 3D GUI manager
@@ -158,6 +160,7 @@ const createScene = async () => {
 	plane.material = planeMat;
 	const fireTexture = new FireProceduralTexture("perlin", 256, scene);
 	planeMat.emissiveTexture = fireTexture;
+	plane.isVisible = false;
 
 	// Function to add a button to the panel
 	const addButtonVideo = () => {
