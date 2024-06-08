@@ -15,11 +15,11 @@ const engine = new BABYLON.Engine(canvas, true);
 const createScene = async () => {
 	const scene = new BABYLON.Scene(engine);
 	setupCameraAndLighting(scene);
-	const groundFromHM = createGround(scene);
-	const picHM = createPicture(scene);
-	const ANote0Video = createVideo(scene);
-	const plane = createFireSphere(scene);
-	const logoModel = await loadLogo(scene);
+	const groundFromHM = createGroundFromHM(scene);
+	const picHM = createPictureWithHM(scene);
+	const video = createVideo(scene);
+	const fireSphere = createFireSphere(scene);
+	const TUDLogo = await loadTUDLogo(scene);
 	const skyBox = createSkybox(scene);
 
 	// Create the 3D GUI manager and panel
@@ -27,10 +27,10 @@ const createScene = async () => {
 	const panel = createPanel(manager);
 
 	// Add buttons to the panel
-	addButtonVideo(panel, ANote0Video, logoModel, plane, groundFromHM, picHM);
-	addButtonSphere(panel, ANote0Video, logoModel, plane, groundFromHM, picHM);
-	addButtonGround(panel, ANote0Video, logoModel, plane, groundFromHM, picHM);
-	addButtonLogo(panel, ANote0Video, logoModel, plane, groundFromHM, picHM);
+	addButtonVideo(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonSphere(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonGround(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonLogo(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
 	addButtonLightToggle(panel, scene);
 	addButtonSkyboxToggle(panel, scene, skyBox);
 
@@ -51,25 +51,25 @@ const setupCameraAndLighting = (scene) => {
 	);
 	camera.attachControl(canvas, true);
 
-	const light = new BABYLON.HemisphericLight(
-		"light",
+	const ambientLight = new BABYLON.HemisphericLight(
+		"ambientLight ",
 		new BABYLON.Vector3(0, 1, 0),
 		scene,
 	);
-	light.intensity = 0.5;
+	ambientLight.intensity = 0.5;
 
-	const light2 = new BABYLON.PointLight(
-		"light2",
+	const magentaSpotlight = new BABYLON.PointLight(
+		"magentaSpotlight ",
 		new BABYLON.Vector3(0, 5, 0),
 		scene,
 	);
-	light2.diffuse = new BABYLON.Color3(1, 0, 1);
-	light2.specular = new BABYLON.Color3(1, 0, 1);
-	light2.setEnabled(false);
+	magentaSpotlight.diffuse = new BABYLON.Color3(1, 0, 1);
+	magentaSpotlight.specular = new BABYLON.Color3(1, 0, 1);
+	magentaSpotlight.setEnabled(false);
 };
 
 // Create the ground from a height map
-const createGround = (scene) => {
+const createGroundFromHM = (scene) => {
 	const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
 	groundMaterial.wireframe = true;
 
@@ -120,20 +120,16 @@ const createSkybox = (scene) => {
 	return skybox;
 };
 
-// Create a picture plane
-const createPicture = (scene) => {
+// Create a picture fireSphere
+const createPictureWithHM = (scene) => {
 	const material = new BABYLON.StandardMaterial("texture1", scene);
-	material.diffuseTexture = new BABYLON.Texture(
-		"Heightmap_Norddeutschland.jpg",
-		scene,
-	);
 	material.emissiveTexture = new BABYLON.Texture(
 		"Heightmap_Norddeutschland.jpg",
 		scene,
 	);
 
 	const picHM = BABYLON.MeshBuilder.CreatePlane(
-		"plane",
+		"fireSphere",
 		{ height: 2, width: 2 },
 		scene,
 	);
@@ -144,19 +140,19 @@ const createPicture = (scene) => {
 	return picHM;
 };
 
-// Create a video plane
+// Create a video fireSphere
 const createVideo = (scene) => {
 	const planeOpts = {
 		height: 2.4762,
 		width: 3.3967,
 		sideOrientation: BABYLON.Mesh.DOUBLESIDE,
 	};
-	const ANote0Video = BABYLON.MeshBuilder.CreatePlane(
-		"plane",
+	const video = BABYLON.MeshBuilder.CreatePlane(
+		"fireSphere",
 		planeOpts,
 		scene,
 	);
-	ANote0Video.position = new BABYLON.Vector3(0, 0, 0.1);
+	video.position = new BABYLON.Vector3(0, 0, 0.1);
 
 	const ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
 	const ANote0VideoVidTex = new BABYLON.VideoTexture(
@@ -166,59 +162,59 @@ const createVideo = (scene) => {
 	);
 	ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
 	ANote0VideoMat.roughness = 1;
-	ANote0Video.material = ANote0VideoMat;
+	video.material = ANote0VideoMat;
 	ANote0VideoVidTex.video.muted = true;
-	ANote0Video.isVisible = false;
-	ANote0Video.position.z = 5;
+	video.isVisible = false;
+	video.position.z = 5;
 
 	scene.onPointerObservable.add((evt) => {
-		if (evt.pickInfo && evt.pickInfo.pickedMesh === ANote0Video) {
+		if (evt.pickInfo && evt.pickInfo.pickedMesh === video) {
 			if (ANote0VideoVidTex.video.paused) ANote0VideoVidTex.video.play();
 			else ANote0VideoVidTex.video.pause();
 			console.log(ANote0VideoVidTex.video.paused ? "paused" : "playing");
 		}
 	}, BABYLON.PointerEventTypes.POINTERPICK);
 
-	return ANote0Video;
+	return video;
 };
 
 // Create a sphere with a fire texture
 const createFireSphere = (scene) => {
-	const plane = BABYLON.MeshBuilder.CreateSphere("plane", scene);
-	plane.scaling = new BABYLON.Vector3(2, 2, 2);
-	plane.position = new BABYLON.Vector3(0, 0, 5);
+	const fireSphere = BABYLON.MeshBuilder.CreateSphere("fireSphere", scene);
+	fireSphere.scaling = new BABYLON.Vector3(2, 2, 2);
+	fireSphere.position = new BABYLON.Vector3(0, 0, 5);
 
 	const planeMat = new BABYLON.StandardMaterial("planeMat", scene);
-	plane.material = planeMat;
+	fireSphere.material = planeMat;
 
 	const fireTexture = new FireProceduralTexture("perlin", 256, scene);
 	planeMat.emissiveTexture = fireTexture;
-	plane.isVisible = false;
+	fireSphere.isVisible = false;
 
-	return plane;
+	return fireSphere;
 };
 
 // Load the TUD logo
-const loadLogo = async (scene) => {
+const loadTUDLogo = async (scene) => {
 	const logo = await BABYLON.SceneLoader.ImportMeshAsync(
 		"",
 		"TUD_Logo.stl",
 		"",
 		scene,
 	);
-	const logoModel = logo.meshes[0];
-	logoModel.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
-	logoModel.renderOverlay = true;
-	logoModel.overlayColor = new BABYLON.Color3(0, 0, 0.5);
-	logoModel.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
-	logoModel.isVisible = false;
-	logoModel.position.z = 3;
+	const TUDLogo = logo.meshes[0];
+	TUDLogo.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
+	TUDLogo.renderOverlay = true;
+	TUDLogo.overlayColor = new BABYLON.Color3(0, 0, 0.5);
+	TUDLogo.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
+	TUDLogo.isVisible = false;
+	TUDLogo.position.z = 3;
 
 	scene.onBeforeRenderObservable.add(() => {
-		logoModel.rotation.y += 0.01;
+		TUDLogo.rotation.y += 0.01;
 	});
 
-	return logoModel;
+	return TUDLogo;
 };
 
 // Create the 3D GUI panel
@@ -237,9 +233,9 @@ const createPanel = (manager) => {
 // Add button to toggle video visibility
 const addButtonVideo = (
 	panel,
-	ANote0Video,
-	logoModel,
-	plane,
+	video,
+	TUDLogo,
+	fireSphere,
 	groundFromHM,
 	picHM,
 ) => {
@@ -247,9 +243,9 @@ const addButtonVideo = (
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
-		ANote0Video.isVisible = !ANote0Video.isVisible;
-		logoModel.isVisible = false;
-		plane.isVisible = false;
+		video.isVisible = !video.isVisible;
+		TUDLogo.isVisible = false;
+		fireSphere.isVisible = false;
 		groundFromHM.isVisible = false;
 		picHM.isVisible = false;
 	});
@@ -264,9 +260,9 @@ const addButtonVideo = (
 // Add button to toggle sphere visibility
 const addButtonSphere = (
 	panel,
-	ANote0Video,
-	logoModel,
-	plane,
+	video,
+	TUDLogo,
+	fireSphere,
 	groundFromHM,
 	picHM,
 ) => {
@@ -274,9 +270,9 @@ const addButtonSphere = (
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
-		ANote0Video.isVisible = false;
-		logoModel.isVisible = false;
-		plane.isVisible = !plane.isVisible;
+		video.isVisible = false;
+		TUDLogo.isVisible = false;
+		fireSphere.isVisible = !fireSphere.isVisible;
 		groundFromHM.isVisible = false;
 		picHM.isVisible = false;
 	});
@@ -291,9 +287,9 @@ const addButtonSphere = (
 // Add button to toggle ground visibility
 const addButtonGround = (
 	panel,
-	ANote0Video,
-	logoModel,
-	plane,
+	video,
+	TUDLogo,
+	fireSphere,
 	groundFromHM,
 	picHM,
 ) => {
@@ -301,9 +297,9 @@ const addButtonGround = (
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
-		ANote0Video.isVisible = false;
-		logoModel.isVisible = false;
-		plane.isVisible = false;
+		video.isVisible = false;
+		TUDLogo.isVisible = false;
+		fireSphere.isVisible = false;
 		groundFromHM.isVisible = !groundFromHM.isVisible;
 		picHM.isVisible = !picHM.isVisible;
 	});
@@ -318,9 +314,9 @@ const addButtonGround = (
 // Add button to toggle logo visibility
 const addButtonLogo = (
 	panel,
-	ANote0Video,
-	logoModel,
-	plane,
+	video,
+	TUDLogo,
+	fireSphere,
 	groundFromHM,
 	picHM,
 ) => {
@@ -328,9 +324,9 @@ const addButtonLogo = (
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
-		logoModel.isVisible = !logoModel.isVisible;
-		ANote0Video.isVisible = false;
-		plane.isVisible = false;
+		TUDLogo.isVisible = !TUDLogo.isVisible;
+		video.isVisible = false;
+		fireSphere.isVisible = false;
 		groundFromHM.isVisible = false;
 		picHM.isVisible = false;
 	});
@@ -342,14 +338,14 @@ const addButtonLogo = (
 	button.content = textBlock;
 };
 
-// Add button to toggle light
+// Add button to toggle ambientLight
 const addButtonLightToggle = (panel, scene) => {
 	const button = new GUI.Button3D("lightToggle");
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
-		const light2 = scene.getLightByName("light2");
-		light2.setEnabled(!light2.isEnabled());
+		const magentaSpotlight = scene.getLightByName("magentaSpotlight ");
+		magentaSpotlight.setEnabled(!magentaSpotlight.isEnabled());
 	});
 
 	const textBlock = new GUI.TextBlock();
