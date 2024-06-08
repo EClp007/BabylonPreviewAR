@@ -32,12 +32,12 @@ const createScene = async () => {
 	// Add buttons to the first panel
 	addButtonVideo(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
 	addButtonSphere(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonGround(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonHeightmap(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
 	addButtonLogo(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
 
 	// Add buttons to the second panel
 	addButtonLightToggle(panel2, scene);
-	addButtonSkyboxToggle(panel2, scene, skyBox);
+	addButtonSkyboxToggle(panel2, skyBox);
 
 	setupXRExperience(scene);
 
@@ -252,7 +252,7 @@ const addButtonVideo = (
 	});
 
 	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Change video";
+	textBlock.text = "Video";
 	textBlock.color = "white";
 	textBlock.fontSize = 24;
 	button.content = textBlock;
@@ -267,7 +267,7 @@ const addButtonSphere = (
 	groundFromHM,
 	picHM,
 ) => {
-	const button = new GUI.Button3D("logo");
+	const button = new GUI.Button3D("fireSphere");
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
@@ -279,14 +279,14 @@ const addButtonSphere = (
 	});
 
 	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Change Sphere";
+	textBlock.text = "Fire Sphere";
 	textBlock.color = "white";
 	textBlock.fontSize = 24;
 	button.content = textBlock;
 };
 
 // Add button to toggle ground visibility
-const addButtonGround = (
+const addButtonHeightmap = (
 	panel,
 	video,
 	tUDLogo,
@@ -294,7 +294,7 @@ const addButtonGround = (
 	groundFromHM,
 	picHM,
 ) => {
-	const button = new GUI.Button3D("logo");
+	const button = new GUI.Button3D("heightmap");
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
@@ -306,7 +306,7 @@ const addButtonGround = (
 	});
 
 	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Ground";
+	textBlock.text = "Heightmap";
 	textBlock.color = "white";
 	textBlock.fontSize = 24;
 	button.content = textBlock;
@@ -333,7 +333,7 @@ const addButtonLogo = (
 	});
 
 	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Change logo";
+	textBlock.text = "TUD Logo";
 	textBlock.color = "white";
 	textBlock.fontSize = 24;
 	button.content = textBlock;
@@ -357,7 +357,7 @@ const addButtonLightToggle = (panel, scene) => {
 };
 
 // Add button to toggle skybox
-const addButtonSkyboxToggle = (panel, scene, skyBox) => {
+const addButtonSkyboxToggle = (panel, skyBox) => {
 	const button = new GUI.Button3D("skyboxToggle");
 	panel.addControl(button);
 
