@@ -5,7 +5,6 @@ import { vrMovement } from "./components/vrMovement";
 import { handtracking } from "./components/handtracking";
 import * as GUI from "@babylonjs/gui";
 import { FireProceduralTexture } from "@babylonjs/procedural-textures";
-import { hitTest } from "./components/hitTest";
 
 // Get the canvas element from the DOM
 const canvas = document.getElementById("renderCanvas");
@@ -35,20 +34,7 @@ const createScene = async () => {
 	addButtonLightToggle(panel, scene);
 	addButtonSkyboxToggle(panel, scene, skyBox);
 
-	const activeHitTest = null;
-
-	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
-		uiOptions: {
-			sessionMode: "immersive-ar", // "immersive-vr"
-		},
-		optionalFeatures: true,
-	});
-	const featureManager = defaultXRExperience.baseExperience.featuresManager;
-
-	// Add hit test button to the panel
-	addButtonHitTest(panel, scene, featureManager, activeHitTest);
-
-	setupXRExperience(scene, featureManager);
+	setupXRExperience(scene);
 
 	return scene;
 };
@@ -79,6 +65,7 @@ const setupCameraAndLighting = (scene) => {
 	);
 	light2.diffuse = new BABYLON.Color3(1, 0, 1);
 	light2.specular = new BABYLON.Color3(1, 0, 1);
+	light2.setEnabled(false);
 };
 
 // Create the ground from a height map
@@ -388,27 +375,6 @@ const addButtonSkyboxToggle = (panel, scene, skyBox) => {
 	button.content = textBlock;
 };
 
-// Add button to toggle hit test
-const addButtonHitTest = (panel, scene, featureManager, activeHitTest) => {
-	const button = new GUI.Button3D("hitTest");
-	panel.addControl(button);
-
-	button.onPointerUpObservable.add(async () => {
-		if (activeHitTest) {
-			activeHitTest.dispose();
-			activeHitTest = null;
-		} else {
-			activeHitTest = await hitTest(scene, featureManager);
-		}
-	});
-
-	const textBlock = new GUI.TextBlock();
-	textBlock.text = "Toggle Hit Test";
-	textBlock.color = "white";
-	textBlock.fontSize = 24;
-	button.content = textBlock;
-};
-
 // Setup XR experience
 const setupXRExperience = async (scene, featureManager) => {
 	const vrOrAr = "ar";
@@ -420,7 +386,6 @@ const setupXRExperience = async (scene, featureManager) => {
 			},
 			optionalFeatures: true,
 		});
-		addButtonHitTest(defaultXRExperience.baseExperience.featuresManager);
 		handtracking(featureManager, defaultXRExperience);
 	} else if (vrOrAr === "vr") {
 		const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
