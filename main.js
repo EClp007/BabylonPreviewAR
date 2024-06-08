@@ -134,7 +134,7 @@ const createPictureWithHM = (scene) => {
 	);
 
 	const picHM = BABYLON.MeshBuilder.CreatePlane(
-		"fireSphere",
+		"picHM",
 		{ height: 2, width: 2 },
 		scene,
 	);
@@ -152,7 +152,7 @@ const createVideo = (scene) => {
 		width: 3.3967,
 		sideOrientation: BABYLON.Mesh.DOUBLESIDE,
 	};
-	const video = BABYLON.MeshBuilder.CreatePlane("fireSphere", planeOpts, scene);
+	const video = BABYLON.MeshBuilder.CreatePlane("video", planeOpts, scene);
 	video.position = new BABYLON.Vector3(0, 0, 0.1);
 
 	const ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
