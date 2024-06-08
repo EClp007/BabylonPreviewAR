@@ -401,7 +401,7 @@ createScene().then((scene) => {
 	engine.runRenderLoop(() => {
 		scene.render();
 	});
-	Inspector.Show(scene, { enablePopup: false });
+	/* Inspector.Show(scene, { enablePopup: false }); */
 });
 
 // Handle window resizing
