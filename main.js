@@ -19,7 +19,7 @@ const createScene = async () => {
 	const picHM = createPictureWithHM(scene);
 	const video = createVideo(scene);
 	const fireSphere = createFireSphere(scene);
-	const TUDLogo = await loadTUDLogo(scene);
+	const tUDLogo = await loadtUDLogo(scene);
 	const skyBox = createSkybox(scene);
 
 	// Create the 3D GUI manager
@@ -30,10 +30,10 @@ const createScene = async () => {
 	const panel2 = createPanel(manager, new BABYLON.Vector3(-3, 0, 0)); // Adjust position for second column
 
 	// Add buttons to the first panel
-	addButtonVideo(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonSphere(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonGround(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonLogo(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonVideo(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonSphere(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonGround(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonLogo(panel1, video, tUDLogo, fireSphere, groundFromHM, picHM);
 
 	// Add buttons to the second panel
 	addButtonLightToggle(panel2, scene);
@@ -196,26 +196,26 @@ const createFireSphere = (scene) => {
 };
 
 // Load the TUD logo
-const loadTUDLogo = async (scene) => {
+const loadtUDLogo = async (scene) => {
 	const logo = await BABYLON.SceneLoader.ImportMeshAsync(
 		"",
 		"TUD_Logo.stl",
 		"",
 		scene,
 	);
-	const TUDLogo = logo.meshes[0];
-	TUDLogo.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
-	TUDLogo.renderOverlay = true;
-	TUDLogo.overlayColor = new BABYLON.Color3(0, 0, 0.5);
-	TUDLogo.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
-	TUDLogo.isVisible = false;
-	TUDLogo.position.z = 3;
+	const tUDLogo = logo.meshes[0];
+	tUDLogo.rotation = new BABYLON.Vector3((3 / 2) * Math.PI, Math.PI, 0);
+	tUDLogo.renderOverlay = true;
+	tUDLogo.overlayColor = new BABYLON.Color3(0, 0, 0.5);
+	tUDLogo.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
+	tUDLogo.isVisible = false;
+	tUDLogo.position.z = 5;
 
 	scene.onBeforeRenderObservable.add(() => {
-		TUDLogo.rotation.y += 0.01;
+		tUDLogo.rotation.y += 0.01;
 	});
 
-	return TUDLogo;
+	return tUDLogo;
 };
 
 // Create the 3D GUI panel
@@ -235,7 +235,7 @@ const createPanel = (manager, position) => {
 const addButtonVideo = (
 	panel,
 	video,
-	TUDLogo,
+	tUDLogo,
 	fireSphere,
 	groundFromHM,
 	picHM,
@@ -245,7 +245,7 @@ const addButtonVideo = (
 
 	button.onPointerUpObservable.add(() => {
 		video.isVisible = !video.isVisible;
-		TUDLogo.isVisible = false;
+		tUDLogo.isVisible = false;
 		fireSphere.isVisible = false;
 		groundFromHM.isVisible = false;
 		picHM.isVisible = false;
@@ -262,7 +262,7 @@ const addButtonVideo = (
 const addButtonSphere = (
 	panel,
 	video,
-	TUDLogo,
+	tUDLogo,
 	fireSphere,
 	groundFromHM,
 	picHM,
@@ -272,7 +272,7 @@ const addButtonSphere = (
 
 	button.onPointerUpObservable.add(() => {
 		video.isVisible = false;
-		TUDLogo.isVisible = false;
+		tUDLogo.isVisible = false;
 		fireSphere.isVisible = !fireSphere.isVisible;
 		groundFromHM.isVisible = false;
 		picHM.isVisible = false;
@@ -289,7 +289,7 @@ const addButtonSphere = (
 const addButtonGround = (
 	panel,
 	video,
-	TUDLogo,
+	tUDLogo,
 	fireSphere,
 	groundFromHM,
 	picHM,
@@ -299,7 +299,7 @@ const addButtonGround = (
 
 	button.onPointerUpObservable.add(() => {
 		video.isVisible = false;
-		TUDLogo.isVisible = false;
+		tUDLogo.isVisible = false;
 		fireSphere.isVisible = false;
 		groundFromHM.isVisible = !groundFromHM.isVisible;
 		picHM.isVisible = !picHM.isVisible;
@@ -316,7 +316,7 @@ const addButtonGround = (
 const addButtonLogo = (
 	panel,
 	video,
-	TUDLogo,
+	tUDLogo,
 	fireSphere,
 	groundFromHM,
 	picHM,
@@ -325,7 +325,7 @@ const addButtonLogo = (
 	panel.addControl(button);
 
 	button.onPointerUpObservable.add(() => {
-		TUDLogo.isVisible = !TUDLogo.isVisible;
+		tUDLogo.isVisible = !tUDLogo.isVisible;
 		video.isVisible = false;
 		fireSphere.isVisible = false;
 		groundFromHM.isVisible = false;
