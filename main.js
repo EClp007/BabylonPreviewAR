@@ -22,17 +22,22 @@ const createScene = async () => {
 	const TUDLogo = await loadTUDLogo(scene);
 	const skyBox = createSkybox(scene);
 
-	// Create the 3D GUI manager and panel
+	// Create the 3D GUI manager
 	const manager = new GUI.GUI3DManager(scene);
-	const panel = createPanel(manager);
 
-	// Add buttons to the panel
-	addButtonVideo(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonSphere(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonGround(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonLogo(panel, video, TUDLogo, fireSphere, groundFromHM, picHM);
-	addButtonLightToggle(panel, scene);
-	addButtonSkyboxToggle(panel, scene, skyBox);
+	// Create two panels for the buttons
+	const panel1 = createPanel(manager, new BABYLON.Vector3(3, 0, 0));
+	const panel2 = createPanel(manager, new BABYLON.Vector3(-3, 0, 0)); // Adjust position for second column
+
+	// Add buttons to the first panel
+	addButtonVideo(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonSphere(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonGround(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
+	addButtonLogo(panel1, video, TUDLogo, fireSphere, groundFromHM, picHM);
+
+	// Add buttons to the second panel
+	addButtonLightToggle(panel2, scene);
+	addButtonSkyboxToggle(panel2, scene, skyBox);
 
 	setupXRExperience(scene);
 
@@ -147,11 +152,7 @@ const createVideo = (scene) => {
 		width: 3.3967,
 		sideOrientation: BABYLON.Mesh.DOUBLESIDE,
 	};
-	const video = BABYLON.MeshBuilder.CreatePlane(
-		"fireSphere",
-		planeOpts,
-		scene,
-	);
+	const video = BABYLON.MeshBuilder.CreatePlane("fireSphere", planeOpts, scene);
 	video.position = new BABYLON.Vector3(0, 0, 0.1);
 
 	const ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
@@ -218,13 +219,13 @@ const loadTUDLogo = async (scene) => {
 };
 
 // Create the 3D GUI panel
-const createPanel = (manager) => {
+const createPanel = (manager, position) => {
 	const panel = new GUI.SpherePanel();
 	panel.margin = 0.2;
 	manager.addControl(panel);
 	panel.isVertical = false;
 	panel.columns = 1;
-	panel.position = new BABYLON.Vector3(3, 0, 0);
+	panel.position = position;
 	panel.isBillboard = true;
 
 	return panel;
