@@ -19,6 +19,8 @@ This project uses Babylon.js to create an interactive 3D scene. Below is a detai
 Shows or hides a video plane within the 3D scene. The video can be interacted with to play or pause it by clicking directly on the video plane. 
 ### Fire Sphere
 Displays or hides a sphere with a dynamic fire texture. 
+![Screenshot_20240608-182550~2](https://github.com/EClp007/BabylonPreviewAR/assets/96184306/c9e755b5-3af3-4dc1-b818-b99e07b20999)
+
 ### Heightmap
 Toggles the visibility of a ground mesh generated from a height map and a corresponding image.
 ### TUD Logo
