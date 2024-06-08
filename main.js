@@ -5,37 +5,7 @@ import { vrMovement } from "./components/vrMovement";
 import { handtracking } from "./components/handtracking";
 import * as GUI from "@babylonjs/gui";
 import { FireProceduralTexture } from "@babylonjs/procedural-textures";
-
-// Hit test function
-export const hitTest = async (scene, featureManager) => {
-	const hitTestFeature = featureManager.enableFeature(
-		BABYLON.WebXRHitTest,
-		"latest",
-	);
-	const model = new BABYLON.Mesh("model", scene);
-	model.position = new BABYLON.Vector3(5, 0, 0);
-
-	const dot = BABYLON.MeshBuilder.CreateSphere(
-		"dot",
-		{ diameter: 0.05 },
-		scene,
-	);
-
-	hitTestFeature.onHitTestResultObservable.add((results) => {
-		if (results.length) {
-			dot.isVisible = true;
-			results[0].transformationMatrix.decompose(
-				dot.scaling,
-				dot.rotationQuaternion || undefined,
-				dot.position,
-			);
-		} else {
-			dot.isVisible = false;
-		}
-	});
-
-	return hitTestFeature;
-};
+import { hitTest } from "./components/hitTest";
 
 // Get the canvas element from the DOM
 const canvas = document.getElementById("renderCanvas");
@@ -65,7 +35,7 @@ const createScene = async () => {
 	addButtonLightToggle(panel, scene);
 	addButtonSkyboxToggle(panel, scene, skyBox);
 
-	let activeHitTest = null;
+	const activeHitTest = null;
 
 	const defaultXRExperience = await scene.createDefaultXRExperienceAsync({
 		uiOptions: {
