@@ -125,7 +125,7 @@ const createSkybox = (scene) => {
 	return skybox;
 };
 
-// Create a picture fireSphere
+// Create a picture witah a HM on it
 const createPictureWithHM = (scene) => {
 	const material = new BABYLON.StandardMaterial("texture1", scene);
 	material.emissiveTexture = new BABYLON.Texture(
@@ -145,7 +145,7 @@ const createPictureWithHM = (scene) => {
 	return picHM;
 };
 
-// Create a video fireSphere
+// Create a video with a test screen
 const createVideo = (scene) => {
 	const planeOpts = {
 		height: 2.4762,
